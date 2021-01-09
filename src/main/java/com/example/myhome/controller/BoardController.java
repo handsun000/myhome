@@ -2,6 +2,8 @@ package com.example.myhome.controller;
 
 import com.example.myhome.model.Board;
 import com.example.myhome.repository.BoardRepository;
+import com.example.myhome.validator.BoardValidatorContent;
+import com.example.myhome.validator.BoardValidatorTitle;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -17,10 +19,17 @@ import java.util.List;
 @RequestMapping("/board")
 public class BoardController {
 
+
     final private BoardRepository boardRepository;
 
-    public BoardController(BoardRepository boardRepository) {
+    final private BoardValidatorContent boardValidatorContent;
+
+    final private BoardValidatorTitle boardValidatorTitle;
+
+    public BoardController(BoardRepository boardRepository, BoardValidatorContent boardValidatorContent, BoardValidatorTitle boardValidatorTitle) {
         this.boardRepository = boardRepository;
+        this.boardValidatorContent = boardValidatorContent;
+        this.boardValidatorTitle = boardValidatorTitle;
     }
 
     @GetMapping("/list")
@@ -44,6 +53,8 @@ public class BoardController {
 
     @PostMapping("/form")
     public String greetingSubmit(@Valid Board board, BindingResult bindingResult) {
+        boardValidatorContent.validate(board, bindingResult);
+        boardValidatorTitle.validate(board, bindingResult);
         if(bindingResult.hasErrors()){
             return "board/form";
         }
