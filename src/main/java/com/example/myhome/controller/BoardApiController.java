@@ -25,7 +25,7 @@ public class BoardApiController {
         if (StringUtils.isEmpty(title) && StringUtils.isEmpty(content)) {
             return repository.findAll();
         } else {
-            return repository.findByTitleorContent(title, content);
+            return repository.findByTitleOrContent(title, content);
         }
     }
     // end::get-aggregate-root[]
