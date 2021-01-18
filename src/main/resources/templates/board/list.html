@@ -1,5 +1,6 @@
 <!doctype html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="fragments/common :: head('게시판')">
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -70,7 +71,8 @@
         <tr th:each="board : ${boards}">
             <td th:text="${board.id}">Mark</td>
             <td><a th:text="${board.title}" th:href="@{/board/form(id=${board.id})}">Otto</a></td>
-            <td>@mdo</td>
+            <td th:text="${board.user.username}">@mdo</td>
+<!--            sec:authentication="name"-->
         </tr>
         </tbody>
     </table>

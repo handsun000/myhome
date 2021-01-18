@@ -2,12 +2,13 @@ package com.example.myhome.controller;
 
 import com.example.myhome.model.Board;
 import com.example.myhome.repository.BoardRepository;
+import com.example.myhome.service.BoardService;
 import com.example.myhome.validator.BoardValidatorContent;
 import com.example.myhome.validator.BoardValidatorTitle;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @Controller
 @RequestMapping("/board")
@@ -30,10 +30,13 @@ public class BoardController {
 
     final private BoardValidatorTitle boardValidatorTitle;
 
-    public BoardController(BoardRepository boardRepository, BoardValidatorContent boardValidatorContent, BoardValidatorTitle boardValidatorTitle) {
+    final private BoardService boardService;
+
+    public BoardController(BoardRepository boardRepository, BoardValidatorContent boardValidatorContent, BoardValidatorTitle boardValidatorTitle, BoardService boardService) {
         this.boardRepository = boardRepository;
         this.boardValidatorContent = boardValidatorContent;
         this.boardValidatorTitle = boardValidatorTitle;
+        this.boardService = boardService;
     }
 
     @GetMapping("/list")
@@ -61,13 +64,15 @@ public class BoardController {
     }
 
     @PostMapping("/form")
-    public String greetingSubmit(@Valid Board board, BindingResult bindingResult) {
+    public String postForm(@Valid Board board, BindingResult bindingResult, Authentication authentication) {
         boardValidatorContent.validate(board, bindingResult);
         boardValidatorTitle.validate(board, bindingResult);
         if(bindingResult.hasErrors()){
             return "board/form";
         }
-        boardRepository.save(board);
+        String username = authentication.getName();
+        boardService.save(username, board);
+//        boardRepository.save(board);
         return "redirect:/board/list";
     }
 }
